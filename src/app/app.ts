@@ -1,3 +1,4 @@
+import { timeStamp } from 'console'
 import express, { Application, Request, Response } from 'express'
 import { model, Schema } from 'mongoose'
 import { type } from 'os'
@@ -5,7 +6,8 @@ const app : Application = express()
 
 app.use(express.json())
 
-const nodeSchema = new Schema({
+const nodeSchema = new Schema(
+     {
   title: { type: String, required: true, trim: true },  // title বাধ্যতামূলক
   content: { type: String, default: 'hello people' },   // ডিফল্ট ভ্যালু
   category: {
@@ -23,7 +25,9 @@ const nodeSchema = new Schema({
       color: { type: String, default: "Red" }           // ডিফল্ট color লাল
     }
   ]
-})
+},
+ {timestamps: true }
+)
 
 
 const Note  = model("Note", nodeSchema)
@@ -72,6 +76,34 @@ app.get('/note/:nodeId', async (req:Request, res:Response)=>{
       res.status(201).json({
            success: true,
            message:"succesfully get note  app",
+           note: notes
+      })
+})
+
+app.patch('/notes/:nodeId', async (req:Request, res:Response)=>{
+
+      
+      const nodeId = req.params.nodeId
+       const updateBody = req.body
+      const notes = await Note.findByIdAndUpdate(nodeId, updateBody, {new:true})
+     
+      res.status(201).json({
+           success: true,
+           message:"succesfully update note  app",
+           note: notes
+      })
+})
+
+
+app.delete('/notes/:nodeId', async (req:Request, res:Response)=>{
+
+      
+      const nodeId = req.params.nodeId
+      const notes = await Note.findByIdAndDelete(nodeId)
+     
+      res.status(201).json({
+           success: true,
+           message:"succesfully delete note  app",
            note: notes
       })
 })
