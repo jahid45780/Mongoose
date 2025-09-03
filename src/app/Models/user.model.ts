@@ -11,9 +11,16 @@ const userSchema = new Schema <IUser>({
          required:true,
          trim:true
       },
+      age:{
+         type:Number,
+         required:true,
+         min:[18, 'plz provied 18 age {VALUE}'],
+         max:60
+      },
       email:{
          type:String,
          required:true,
+         unique:true,
           trim:true
       },
       password:{
