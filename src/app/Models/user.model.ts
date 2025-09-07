@@ -1,10 +1,19 @@
 import { model, Schema } from "mongoose"
-import { IUser } from "../interface/user.interface"
+import validator from 'validator';
+import { IAddress, IUser } from "../interface/user.interface"
+
+const addressSchema = new Schema<IAddress>({
+    city:{type: String},
+    street:{type: String},
+    zip:{type: Number}
+},{
+   _id:false
+})
  
 const userSchema = new Schema <IUser>({
       firstName: {
          type:String,
-         required:true
+         required:[true, 'plz firstName daw']
       },
       lastName:{
          type:String,
@@ -21,7 +30,8 @@ const userSchema = new Schema <IUser>({
          type:String,
          required:true,
          unique:true,
-          trim:true
+          trim:true,
+          validate:[validator.isEmail, 'Invalid email sent']
       },
       password:{
          type:String,
@@ -30,9 +40,18 @@ const userSchema = new Schema <IUser>({
       },
       role:{
          type:String,
-         enum: ['user', 'admin'],
+         enum:{
+            values:['user', 'admin'],
+            message:'ROLE IS NOT VALID'
+         },
          default:'user'
+      },
+      address:{
+         type:addressSchema
       }
+},{
+   versionKey:false,
+   timestamps:true
 })
 
  export const User = model("User", userSchema)  
